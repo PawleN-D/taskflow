@@ -1,12 +1,22 @@
-import { beforeAll, afterAll, afterEach } from "vitest";
-import { db } from "../src/db/connection.js";
+import { beforeAll, afterAll, afterEach } from 'vitest';
+import { config } from 'dotenv';
+
+config({ path: '.env.test' });
+
+process.env.NODE_ENV = 'test';
+
+if (!process.env.DATABASE_URL?.includes('test')) {
+  throw new Error('Not using test database! Set DATABASE_URL to test database.');
+}
 
 beforeAll(async () => {
-    process.env.DATABASE_URL = process.env.TEST_DATABASE_URL as string;
+  console.log('🧪 Test suite starting...');
 });
 
-afterEach(async () => {});
+afterEach(async () => {
+  // Clean up after each test
+});
 
 afterAll(async () => {
-
+  console.log('✅ Test suite completed');
 });
