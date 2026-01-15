@@ -1,5 +1,4 @@
-# Create root .gitignore
-cat > .gitignore << 'EOF'
+
 # Dependencies
 node_modules/
 .pnp
