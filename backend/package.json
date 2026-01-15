@@ -14,11 +14,13 @@
     "test:coverage": "vitest run --coverage",
     "db:generate": "drizzle-kit generate:pg",
     "db:push": "drizzle-kit push:pg",
+    "db:migrate": "drizzle-kit migrate:pg",
     "db:studio": "drizzle-kit studio",
     "db:drop": "drizzle-kit drop",
     "lint": "eslint . --ext .ts",
     "format": "prettier --write \"src/**/*.ts\" \"tests/**/*.ts\"",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "setup": "npm install && npm run db:push"
   },
   "keywords": [
     "task-management",
