@@ -37,7 +37,7 @@ export class AuthService {
 
         const isPasswordValid = await bcrypt.compare(data.password, user.password_hash);
         if (!isPasswordValid) {
-            throw new Error("Invalid email or password");
+            throw new Error("Invalid credentials");
         }
 
         const token = jwt.sign({ userId: user.id, email: user.email }, process.env.JWT_SECRET! as string, { expiresIn: "7d" });
