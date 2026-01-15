@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import request from 'supertest';
-// import { app } from '../src/app';
+import { app } from '../src/app';
 import { db } from '../src/db/connection';
 import { users } from '../src/db/schema';
 import { eq } from 'drizzle-orm';
