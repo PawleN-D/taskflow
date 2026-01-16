@@ -40,6 +40,7 @@ describe('POST /api/auth/register', () => {
       .expect(400);
 
     expect(response.body).toHaveProperty('error');
+    expect(response.body.error).toContain('email');
   });
 
   it('should reject registration with weak password', async () => {
@@ -54,7 +55,8 @@ describe('POST /api/auth/register', () => {
       .send(userData)
       .expect(400);
 
-    expect(response.body.error).toContain('password');
+    expect(response.body).toHaveProperty('error');
+    expect(response.body.error.toLowerCase()).toContain('password');
   });
 
   it('should reject duplicate email registration', async () => {
@@ -64,8 +66,13 @@ describe('POST /api/auth/register', () => {
       name: 'Test User',
     };
 
-    await request(app).post('/api/auth/register').send(userData).expect(201);
+    // First registration
+    await request(app)
+      .post('/api/auth/register')
+      .send(userData)
+      .expect(201);
 
+    // Duplicate registration
     const response = await request(app)
       .post('/api/auth/register')
       .send(userData)
@@ -81,7 +88,9 @@ describe('POST /api/auth/register', () => {
       name: 'Test User',
     };
 
-    await request(app).post('/api/auth/register').send(userData);
+    await request(app)
+      .post('/api/auth/register')
+      .send(userData);
 
     const user = await User.findOne({ email: userData.email });
 
