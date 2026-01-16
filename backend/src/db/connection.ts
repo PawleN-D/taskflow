@@ -1,9 +1,30 @@
-import { drizzle } from "drizzle-orm/node-postgres";
-import { Pool } from "pg";
-import * as schema from "./schema.js";
+import mongoose from 'mongoose';
 
-const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
+const MONGODB_URI = process.env.DATABASE_URL || 'mongodb://localhost:27017/taskflow';
+
+export async function connectDB() {
+  try {
+    await mongoose.connect(MONGODB_URI);
+    console.log('✅ MongoDB connected successfully');
+    console.log('📊 Database:', mongoose.connection.db?.databaseName);
+  } catch (error) {
+    console.error('❌ MongoDB connection error:', error);
+    process.exit(1);
+  }
+}
+
+export async function disconnectDB() {
+  await mongoose.disconnect();
+  console.log('MongoDB disconnected');
+}
+
+// Handle connection events
+mongoose.connection.on('error', (err) => {
+  console.error('MongoDB connection error:', err);
 });
 
-export const db = drizzle(pool, { schema });
+mongoose.connection.on('disconnected', () => {
+  console.log('MongoDB disconnected');
+});
+
+export { mongoose };

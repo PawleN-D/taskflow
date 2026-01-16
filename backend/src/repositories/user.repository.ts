@@ -1,25 +1,24 @@
-import {db} from '../db/connection';
-import {users} from '../db/schema';
-import {eq} from 'drizzle-orm';
-import type {User} from '../types';
+import { User, IUser } from '../db/models/User.js';
 
 export class UserRepository {
-    async create(data: {
-        email: string;
-        password_hash: string;
-        name: string;
-    }): Promise<User> {
-        const [user] = await db.insert(users).values(data).returning();
-        return user;
-    }
+  async create(data: {
+    email: string;
+    password_hash: string;
+    name: string;
+  }): Promise<IUser> {
+    const user = new User(data);
+    return await user.save();
+  }
 
-    async findByEmail(email: string): Promise<User | null> {
-        const [user] =await db.select().from(users).where(eq(users.email, email));
-        return user || null;
-    }
+  async findByEmail(email: string): Promise<IUser | null> {
+    return await User.findOne({ email });
+  }
 
-    async findById(id: string): Promise<User | null> {
-        const [user] = await db.select().from(users).where(eq(users.id, id));
-        return user || null;
-    }
+  async findById(id: string): Promise<IUser | null> {
+    return await User.findById(id);
+  }
+
+  async deleteAll(): Promise<void> {
+    await User.deleteMany({});
+  }
 }

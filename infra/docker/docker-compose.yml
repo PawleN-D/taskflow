@@ -2,47 +2,29 @@ version: '3.8'
 
 services:
   postgres:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: postgres:15-alpine
     container_name: taskflow-db
     environment:
-      POSTGRES_USER: taskflow
-      POSTGRES_PASSWORD: password123
+      POSTGRES_PASSWORD: postgres
       POSTGRES_DB: taskflow
+      POSTGRES_USER: postgres
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U taskflow"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    restart: unless-stopped
+      - taskflow_data:/var/lib/postgresql/data
 
   postgres_test:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: postgres:15-alpine
     container_name: taskflow-db-test
     environment:
-      POSTGRES_USER: taskflow
-      POSTGRES_PASSWORD: password123
+      POSTGRES_PASSWORD: postgres
       POSTGRES_DB: taskflow_test
+      POSTGRES_USER: postgres
     ports:
       - "5433:5432"
     volumes:
-      - postgres_test_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U taskflow"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    restart: unless-stopped
+      - taskflow_test_data:/var/lib/postgresql/data
 
 volumes:
-  postgres_data:
-    driver: local
-  postgres_test_data:
-    driver: local
+  taskflow_data:
+  taskflow_test_data:

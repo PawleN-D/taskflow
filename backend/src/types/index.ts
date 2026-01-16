@@ -1,28 +1,5 @@
-export interface User {
-  id: string;
-  email: string;
-  password_hash: string;
-  name: string;
-  created_at: Date;
-  updated_at: Date;
-}
+import { IUser } from '../db/models/User.js';
+import { IWorkspace } from '../db/models/Workspace.js';
+import { ITask } from '../db/models/Task.js';
 
-export interface Workspace {
-  id: string;
-  name: string;
-  slug: string;
-  owner_id: string;
-  created_at: Date;
-}
-
-export interface Task {
-  id: string;
-  workspace_id: string;
-  title: string;
-  description: string | null;
-  status: 'todo' | 'in_progress' | 'done';
-  assigned_to: string | null;
-  created_by: string;
-  created_at: Date;
-  updated_at: Date;
-}
+export { IUser, IWorkspace, ITask };
