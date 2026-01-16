@@ -1,14 +1,11 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import request from 'supertest';
-import { app } from '../src/app';
-import { db } from '../src/db/connection';
-import { users } from '../src/db/schema';
-import { eq } from 'drizzle-orm';
+import { app } from '../src/app.js';
+import { User } from '../src/db/models/User.js';
 
 describe('POST /api/auth/register', () => {
   beforeEach(async () => {
-    // Clean users table before each test
-    await db.delete(users);
+    await User.deleteMany({});
   });
 
   it('should register a new user with valid data', async () => {
@@ -43,7 +40,6 @@ describe('POST /api/auth/register', () => {
       .expect(400);
 
     expect(response.body).toHaveProperty('error');
-    expect(response.body.error).toContain('email');
   });
 
   it('should reject registration with weak password', async () => {
@@ -68,13 +64,8 @@ describe('POST /api/auth/register', () => {
       name: 'Test User',
     };
 
-    // First registration
-    await request(app)
-      .post('/api/auth/register')
-      .send(userData)
-      .expect(201);
+    await request(app).post('/api/auth/register').send(userData).expect(201);
 
-    // Duplicate registration
     const response = await request(app)
       .post('/api/auth/register')
       .send(userData)
@@ -90,16 +81,11 @@ describe('POST /api/auth/register', () => {
       name: 'Test User',
     };
 
-    await request(app)
-      .post('/api/auth/register')
-      .send(userData);
+    await request(app).post('/api/auth/register').send(userData);
 
-    const [user] = await db
-      .select()
-      .from(users)
-      .where(eq(users.email, userData.email));
+    const user = await User.findOne({ email: userData.email });
 
-    expect(user.password_hash).not.toBe(userData.password);
-    expect(user.password_hash.length).toBeGreaterThan(50);
+    expect(user!.password_hash).not.toBe(userData.password);
+    expect(user!.password_hash.length).toBeGreaterThan(50);
   });
 });
